@@ -25,7 +25,7 @@
      <visual>
         <origin xyz="0 0 -${0.53}" rpy="${PI/2} 0 -${PI/2}"/>
         <geometry>
-          <mesh filename="package://robots_ee_pkg/meshes/lf044_rough.dae" scale="0.001 0.001 0.001"/>
+          <mesh filename="package://iwtros_description/meshes/lf044_rough.dae" scale="0.001 0.001 0.001"/>
         </geometry>
         <material name="grey">
           <color rgba="0.5 0.5 0.5 1"/>
@@ -34,7 +34,7 @@
       <collision>
         <origin xyz="0 0 -${0.53}" rpy="${PI/2} 0 -${PI/2}"/>
           <geometry>
-            <mesh filename="package://robots_ee_pkg/meshes/lf044_rough.stl" scale="0.001 0.001 0.001"/>
+            <mesh filename="package://iwtros_description/meshes/lf044_rough.stl" scale="0.001 0.001 0.001"/>
           </geometry>
       </collision>
     </link>

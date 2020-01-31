@@ -26,16 +26,9 @@ find_package(catkin REQUIRED COMPONENTS
   dynamic_reconfigure
 )
 
-find_package(gazebo REQUIRED)
-find_package(TinyXML REQUIRED)
-
-########### > before build run chmod a+x laserscan_multi_merger.cfg #############
-generate_dynamic_reconfigure_options(cfg/laserscan_multi_merger.cfg)
-
 catkin_package(
   INCLUDE_DIRS 
     include
-    cfg
   LIBRARIES 
     conveyor_spawner
     urdf_creator
@@ -52,8 +45,6 @@ catkin_package(
     std_msgs 
     std_srvs 
     tf
-    DEPENDS
-      TinyXML
 )
 ###########
 ## Build ##
@@ -61,17 +52,4 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(
- include
-  ${catkin_INCLUDE_DIRS}
-  ${GAZEBO_INCLUDE_DIRS}
-  ${roscpp_INCLUDE_DIRS}
-  ${TinyXML_INCLUDE_DIRS}
-  ${EIGEN_INCLUDE_DIRS}
-  ${PCL_INCLUDE_DIRS}
-)
-
-link_directories(
-  ${GAZEBO_LIBRARY_DIRS}
-)
 
