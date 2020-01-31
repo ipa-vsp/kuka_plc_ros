@@ -20,12 +20,43 @@
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="iiwa_eef" parent_link="iiwa_link_ee" group="iiwa_handa" parent_group="iiwa_arm" />
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
+    <disable_collisions link1="conveyor_system_link" link2="dbhwconveyor" reason="Adjacent" />
+    <disable_collisions link1="conveyor_system_link" link2="display" reason="Adjacent" />
+    <disable_collisions link1="conveyor_system_link" link2="iiwa_link_0" reason="Never" />
+    <disable_collisions link1="conveyor_system_link" link2="iiwa_link_1" reason="Never" />
+    <disable_collisions link1="conveyor_system_link" link2="iiwa_link_2" reason="Never" />
+    <disable_collisions link1="conveyor_system_link" link2="iiwa_link_3" reason="Never" />
+    <disable_collisions link1="conveyor_system_link" link2="iiwa_table_base" reason="Adjacent" />
+    <disable_collisions link1="conveyor_system_link" link2="sensor" reason="Adjacent" />
+    <disable_collisions link1="conveyor_system_link" link2="table_ee" reason="Never" />
+    <disable_collisions link1="conveyor_system_link" link2="wall" reason="Adjacent" />
+    <disable_collisions link1="dbhwconveyor" link2="display" reason="Adjacent" />
+    <disable_collisions link1="dbhwconveyor" link2="iiwa_link_0" reason="Never" />
+    <disable_collisions link1="dbhwconveyor" link2="iiwa_link_1" reason="Never" />
+    <disable_collisions link1="dbhwconveyor" link2="iiwa_link_2" reason="Never" />
+    <disable_collisions link1="dbhwconveyor" link2="iiwa_link_3" reason="Never" />
+    <disable_collisions link1="dbhwconveyor" link2="iiwa_link_4" reason="Never" />
+    <disable_collisions link1="dbhwconveyor" link2="iiwa_link_5" reason="Never" />
+    <disable_collisions link1="dbhwconveyor" link2="iiwa_table_base" reason="Adjacent" />
+    <disable_collisions link1="dbhwconveyor" link2="sensor" reason="Adjacent" />
+    <disable_collisions link1="dbhwconveyor" link2="table_ee" reason="Never" />
+    <disable_collisions link1="dbhwconveyor" link2="wall" reason="Adjacent" />
+    <disable_collisions link1="display" link2="iiwa_link_0" reason="Never" />
+    <disable_collisions link1="display" link2="iiwa_link_1" reason="Never" />
+    <disable_collisions link1="display" link2="iiwa_link_2" reason="Never" />
+    <disable_collisions link1="display" link2="iiwa_link_3" reason="Never" />
+    <disable_collisions link1="display" link2="iiwa_table_base" reason="Adjacent" />
+    <disable_collisions link1="display" link2="sensor" reason="Adjacent" />
+    <disable_collisions link1="display" link2="table_ee" reason="Never" />
+    <disable_collisions link1="display" link2="wall" reason="Adjacent" />
     <disable_collisions link1="iiwa_link_0" link2="iiwa_link_1" reason="Adjacent" />
     <disable_collisions link1="iiwa_link_0" link2="iiwa_link_2" reason="Never" />
     <disable_collisions link1="iiwa_link_0" link2="iiwa_link_3" reason="Never" />
     <disable_collisions link1="iiwa_link_0" link2="iiwa_link_4" reason="Never" />
     <disable_collisions link1="iiwa_link_0" link2="iiwa_table_base" reason="Adjacent" />
+    <disable_collisions link1="iiwa_link_0" link2="sensor" reason="Never" />
     <disable_collisions link1="iiwa_link_0" link2="table_ee" reason="Default" />
+    <disable_collisions link1="iiwa_link_0" link2="wall" reason="Never" />
     <disable_collisions link1="iiwa_link_1" link2="iiwa_link_2" reason="Adjacent" />
     <disable_collisions link1="iiwa_link_1" link2="iiwa_link_3" reason="Never" />
     <disable_collisions link1="iiwa_link_1" link2="iiwa_link_4" reason="Never" />
@@ -33,8 +64,12 @@
     <disable_collisions link1="iiwa_link_1" link2="iiwa_link_6" reason="Never" />
     <disable_collisions link1="iiwa_link_1" link2="iiwa_link_7" reason="Never" />
     <disable_collisions link1="iiwa_link_1" link2="iiwa_table_base" reason="Never" />
+    <disable_collisions link1="iiwa_link_1" link2="sensor" reason="Never" />
     <disable_collisions link1="iiwa_link_1" link2="table_ee" reason="Never" />
+    <disable_collisions link1="iiwa_link_1" link2="wall" reason="Never" />
     <disable_collisions link1="iiwa_link_1" link2="wsg50_base_link" reason="Never" />
+    <disable_collisions link1="iiwa_link_1" link2="wsg50_finger_left" reason="Never" />
+    <disable_collisions link1="iiwa_link_1" link2="wsg50_finger_right" reason="Never" />
     <disable_collisions link1="iiwa_link_1" link2="wsg50_gripper_left" reason="Never" />
     <disable_collisions link1="iiwa_link_1" link2="wsg50_gripper_right" reason="Never" />
     <disable_collisions link1="iiwa_link_2" link2="iiwa_link_3" reason="Adjacent" />
@@ -43,7 +78,9 @@
     <disable_collisions link1="iiwa_link_2" link2="iiwa_link_6" reason="Never" />
     <disable_collisions link1="iiwa_link_2" link2="iiwa_link_7" reason="Never" />
     <disable_collisions link1="iiwa_link_2" link2="iiwa_table_base" reason="Never" />
+    <disable_collisions link1="iiwa_link_2" link2="sensor" reason="Never" />
     <disable_collisions link1="iiwa_link_2" link2="table_ee" reason="Never" />
+    <disable_collisions link1="iiwa_link_2" link2="wall" reason="Never" />
     <disable_collisions link1="iiwa_link_2" link2="wsg50_base_link" reason="Never" />
     <disable_collisions link1="iiwa_link_2" link2="wsg50_finger_left" reason="Never" />
     <disable_collisions link1="iiwa_link_2" link2="wsg50_finger_right" reason="Never" />
@@ -54,7 +91,9 @@
     <disable_collisions link1="iiwa_link_3" link2="iiwa_link_6" reason="Never" />
     <disable_collisions link1="iiwa_link_3" link2="iiwa_link_7" reason="Never" />
     <disable_collisions link1="iiwa_link_3" link2="iiwa_table_base" reason="Never" />
+    <disable_collisions link1="iiwa_link_3" link2="sensor" reason="Never" />
     <disable_collisions link1="iiwa_link_3" link2="table_ee" reason="Never" />
+    <disable_collisions link1="iiwa_link_3" link2="wall" reason="Never" />
     <disable_collisions link1="iiwa_link_3" link2="wsg50_base_link" reason="Never" />
     <disable_collisions link1="iiwa_link_3" link2="wsg50_finger_left" reason="Never" />
     <disable_collisions link1="iiwa_link_3" link2="wsg50_finger_right" reason="Never" />
@@ -63,7 +102,9 @@
     <disable_collisions link1="iiwa_link_4" link2="iiwa_link_5" reason="Adjacent" />
     <disable_collisions link1="iiwa_link_4" link2="iiwa_link_6" reason="Never" />
     <disable_collisions link1="iiwa_link_4" link2="iiwa_link_7" reason="Never" />
+    <disable_collisions link1="iiwa_link_4" link2="sensor" reason="Never" />
     <disable_collisions link1="iiwa_link_4" link2="table_ee" reason="Never" />
+    <disable_collisions link1="iiwa_link_4" link2="wall" reason="Never" />
     <disable_collisions link1="iiwa_link_4" link2="wsg50_base_link" reason="Never" />
     <disable_collisions link1="iiwa_link_4" link2="wsg50_finger_left" reason="Never" />
     <disable_collisions link1="iiwa_link_4" link2="wsg50_finger_right" reason="Never" />
@@ -71,23 +112,36 @@
     <disable_collisions link1="iiwa_link_4" link2="wsg50_gripper_right" reason="Never" />
     <disable_collisions link1="iiwa_link_5" link2="iiwa_link_6" reason="Adjacent" />
     <disable_collisions link1="iiwa_link_5" link2="iiwa_link_7" reason="Never" />
+    <disable_collisions link1="iiwa_link_5" link2="sensor" reason="Never" />
     <disable_collisions link1="iiwa_link_5" link2="wsg50_base_link" reason="Never" />
     <disable_collisions link1="iiwa_link_5" link2="wsg50_finger_left" reason="Never" />
     <disable_collisions link1="iiwa_link_5" link2="wsg50_finger_right" reason="Never" />
     <disable_collisions link1="iiwa_link_5" link2="wsg50_gripper_left" reason="Never" />
     <disable_collisions link1="iiwa_link_5" link2="wsg50_gripper_right" reason="Never" />
     <disable_collisions link1="iiwa_link_6" link2="iiwa_link_7" reason="Adjacent" />
+    <disable_collisions link1="iiwa_link_6" link2="sensor" reason="Never" />
     <disable_collisions link1="iiwa_link_6" link2="wsg50_base_link" reason="Never" />
     <disable_collisions link1="iiwa_link_6" link2="wsg50_finger_left" reason="Never" />
     <disable_collisions link1="iiwa_link_6" link2="wsg50_finger_right" reason="Never" />
     <disable_collisions link1="iiwa_link_6" link2="wsg50_gripper_left" reason="Never" />
     <disable_collisions link1="iiwa_link_6" link2="wsg50_gripper_right" reason="Never" />
+    <disable_collisions link1="iiwa_link_7" link2="sensor" reason="Never" />
     <disable_collisions link1="iiwa_link_7" link2="wsg50_base_link" reason="Adjacent" />
     <disable_collisions link1="iiwa_link_7" link2="wsg50_finger_left" reason="Never" />
     <disable_collisions link1="iiwa_link_7" link2="wsg50_finger_right" reason="Never" />
     <disable_collisions link1="iiwa_link_7" link2="wsg50_gripper_left" reason="Never" />
     <disable_collisions link1="iiwa_link_7" link2="wsg50_gripper_right" reason="Never" />
+    <disable_collisions link1="iiwa_table_base" link2="sensor" reason="Adjacent" />
     <disable_collisions link1="iiwa_table_base" link2="table_ee" reason="Adjacent" />
+    <disable_collisions link1="iiwa_table_base" link2="wall" reason="Adjacent" />
+    <disable_collisions link1="sensor" link2="table_ee" reason="Never" />
+    <disable_collisions link1="sensor" link2="wall" reason="Adjacent" />
+    <disable_collisions link1="sensor" link2="wsg50_base_link" reason="Never" />
+    <disable_collisions link1="sensor" link2="wsg50_finger_left" reason="Never" />
+    <disable_collisions link1="sensor" link2="wsg50_finger_right" reason="Never" />
+    <disable_collisions link1="sensor" link2="wsg50_gripper_left" reason="Never" />
+    <disable_collisions link1="sensor" link2="wsg50_gripper_right" reason="Never" />
+    <disable_collisions link1="table_ee" link2="wall" reason="Never" />
     <disable_collisions link1="wsg50_base_link" link2="wsg50_finger_left" reason="Never" />
     <disable_collisions link1="wsg50_base_link" link2="wsg50_finger_right" reason="Never" />
     <disable_collisions link1="wsg50_base_link" link2="wsg50_gripper_left" reason="Adjacent" />
