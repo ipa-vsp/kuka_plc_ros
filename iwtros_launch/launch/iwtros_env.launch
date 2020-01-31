@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
   <arg name="hardware_interface" default="PositionJointInterface"/>
-  <arg name="sim" default="true"/>
+  <arg name="sim" default="false"/>
   <!-- these are the arguments you can pass this launch file, for example paused:=true -->
   <arg name="paused" default="false"/>
   <arg name="use_sim_time" default="true"/>
@@ -43,5 +43,4 @@
   <!--node pkg="tf2_ros" type="static_transform_publisher" name="world_to_inteface" args="0 0 0 0 0 0 world world_interface"/-->
   <!--node if="$(arg sim)" pkg="tf2_ros" type="static_transform_publisher" name="map_to_world" args="0 0 0 0 0 0 1  map world"/-->
   <!-- Laser scaner merger -->
-  <include file="$(find iwtros_gazebo)/launch/laserscan_multi_merger.launch"/>
 </launch>
