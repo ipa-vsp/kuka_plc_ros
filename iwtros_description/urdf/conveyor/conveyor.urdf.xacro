@@ -51,7 +51,7 @@
       <visual>
         <origin rpy="0 0 0" xyz="0 0 0"/>
         <geometry>
-          <box size="0.3 0.01 0.5"/>
+          <box size="0.55 0.01 0.67"/>
         </geometry>
         <material name="white">
           <color rgba="1.0 1.0 1.0 1.0"/>
@@ -60,7 +60,7 @@
       <collision>
         <origin rpy="0 0 0" xyz="0 0 0"/>
           <geometry>
-            <box size="0.3 0.01 0.5"/>
+            <box size="0.55 0.01 0.67"/>
           </geometry>
       </collision>
     </link>
@@ -68,7 +68,7 @@
     <joint name="${parent}_display_joint" type="fixed">
         <parent link="${parent}"/>
         <child link="display"/>
-        <origin xyz="0 -0.6 1.25"/>
+        <origin xyz="0 -0.6 1.335"/>
     </joint>
 
   </xacro:macro>

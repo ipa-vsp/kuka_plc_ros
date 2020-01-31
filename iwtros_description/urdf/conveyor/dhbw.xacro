@@ -41,7 +41,7 @@
       <visual>
         <origin rpy="0 0 0" xyz="0 0 0"/>
         <geometry>
-          <box size="0.8 0.3 0.81"/>
+          <box size="0.46 0.24 0.81"/>
         </geometry>
         <material name="green">
           <color rgba="0.0 0.8 0.0 1.0"/>
@@ -50,7 +50,7 @@
       <collision>
         <origin rpy="0 0 0" xyz="0 0 0"/>
           <geometry>
-            <box size="0.8 0.3 0.81"/>
+            <box size="0.46 0.24 0.81"/>
           </geometry>
       </collision>
     </link>
@@ -58,7 +58,7 @@
     <joint name="${parent}_dbhwconveyor_joint" type="fixed">
         <parent link="${parent}"/>
         <child link="dbhwconveyor"/>
-        <origin xyz="0 0.76 0.405"/>
+        <origin xyz="0.53 0.67 0.405"/>
     </joint>
 
     <link name="sensor">
@@ -70,7 +70,7 @@
       <visual>
         <origin rpy="0 0 0" xyz="0 0 0"/>
         <geometry>
-          <box size="0.2 0.15 0.2"/>
+          <box size="0.15 0.15 0.3"/>
         </geometry>
         <material name="yellow">
           <color rgba="0.8 0.8 0.0 1.0"/>
@@ -79,7 +79,7 @@
       <collision>
         <origin rpy="0 0 0" xyz="0 0 0"/>
           <geometry>
-            <box size="0.2 0.15 0.2"/>
+            <box size="0.15 0.15 0.3"/>
           </geometry>
       </collision>
     </link>
@@ -87,7 +87,7 @@
     <joint name="${parent}_sensor_joint" type="fixed">
         <parent link="${parent}"/>
         <child link="sensor"/>
-        <origin xyz="0 3 0"/>
+        <origin xyz="0.205 0.745 1.15"/>
     </joint>
     
   </xacro:macro>
