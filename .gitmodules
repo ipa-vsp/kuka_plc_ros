@@ -1,6 +1,6 @@
-[submodule "iiwa_stack"]
-	path = iiwa_stack
-	url = https://github.com/lernfabrik/iiwa_stack.git
+[submodule "iiwa_ros"]
+	path = iiwa_ros
+	url = https://github.com/lernfabrik/iiwa_ros.git
 [submodule "wsg50_ros"]
 	path = wsg50_ros
 	url = https://github.com/lernfabrik/wsg50_ros.git
