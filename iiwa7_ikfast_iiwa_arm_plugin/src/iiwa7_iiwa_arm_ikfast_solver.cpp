@@ -12,7 +12,7 @@
 /// See the License for the specific language governing permissions and
 /// limitations under the License.
 ///
-/// ikfast version 0x10000049 generated on 2019-07-26 15:20:23.733271
+/// ikfast version 0x1000004a generated on 2020-02-18 15:39:51.030553
 /// To compile with gcc:
 ///     gcc -lstdc++ ik.cpp
 /// To compile without any main function as a shared object (might need -llapack):
@@ -23,7 +23,7 @@ using namespace ikfast;
 
 // check if the included ikfast version matches what this file was compiled with
 #define IKFAST_COMPILE_ASSERT(x) extern int __dummy[(int)x]
-IKFAST_COMPILE_ASSERT(IKFAST_VERSION==0x10000049);
+IKFAST_COMPILE_ASSERT(IKFAST_VERSION==0x1000004a);
 
 #include <cmath>
 #include <vector>
@@ -514,7 +514,7 @@ IkReal x91=(x84*x85);
 IkReal x92=((4.096)*x87*x89);
 IkReal x93=((((1.6384)*x87*x91))+((x87*x88)));
 j6eval[0]=((IKabs(((((-1.0)*x83*x88))+(((4.096)*x86*x89))+(((-1.6384)*x83*x91))+(((-1.6384)*x86*x91))+(((-1.0)*x86*x88))+(((4.096)*x83*x89)))))+(((0.5)*(IKabs(((((1.024)*x80*x89))+(((-0.4096)*x80*x91))+(((1.024)*x83*x89))+(((-1.0)*x80*x90))+(((-1.0)*x83*x90))+(((-0.4096)*x83*x91)))))))+(IKabs((x92+(((-1.0)*x93)))))+(((0.5)*(IKabs(((((-2.4576)*x83*x91))+(((8.192)*x86*x89))+(((-5.12)*x82*x86))+(((6.144)*x83*x89))+(((-3.2768)*x86*x91))+(((-3.84)*x82*x83))+(((1.28)*x80*x82))+(((0.8192)*x80*x91))+(((-2.048)*x80*x89)))))))+(IKabs((x93+(((-1.0)*x92))))));
-if( IKabs(j6eval[0]) < 0.0000000010000000  )
+if( IKabs(j6eval[0]) < 0.0000000100000000  )
 {
 continue; // no branches [j0, j5, j6]
 
@@ -5699,7 +5699,7 @@ IkReal x270=((8.0)*new_r00);
 IkReal x271=(x265*x266);
 IkReal x272=(x265*x267);
 j2eval[0]=((IKabs((((new_r22*x269))+(((-1.0)*x270)))))+(IKabs(((((-1.0)*new_r22*x270))+((x265*x269)))))+(IKabs((x267+(((-1.0)*x272)))))+(IKabs((x271+(((-1.0)*x266)))))+(IKabs((x272+(((-1.0)*x267)))))+(IKabs((x266+(((-1.0)*x271)))))+(IKabs(((((32.0)*new_r11))+(((-1.0)*new_r00*x268))+(((-16.0)*new_r11*x265)))))+(IKabs(((((-32.0)*new_r00*x265))+(((16.0)*new_r00))+((new_r11*x268))))));
-if( IKabs(j2eval[0]) < 0.0000000010000000  )
+if( IKabs(j2eval[0]) < 0.0000000100000000  )
 {
 continue; // no branches [j2, j4]
 
@@ -5760,7 +5760,7 @@ IkReal x282=(new_r11*x279);
 IkReal x283=(x278*x279);
 IkReal x284=((8.0)*x282);
 j2evalpoly[0]=((((htj2*htj2)*(((((32.0)*new_r11))+(((-16.0)*x282))+(((-16.0)*x280))))))+(((htj2*htj2*htj2)*((x283+(((-1.0)*x278))))))+x284+((htj2*((x278+(((-1.0)*x283))))))+(((-1.0)*x281))+(((htj2*htj2*htj2*htj2)*((x284+(((-1.0)*x281)))))));
-if( IKabs(j2evalpoly[0]) > 0.0000000010000000  )
+if( IKabs(j2evalpoly[0]) > 0.0000001000000000  )
 {
     continue;
 }
@@ -19060,9 +19060,9 @@ IKSolver solver;
 return solver.ComputeIk(eetrans,eerot,pfree,solutions);
 }
 
-IKFAST_API const char* GetKinematicsHash() { return "<robot:GenericRobot - iiwa7 (df59453aadeada0c1d102fc92db621ea)>"; }
+IKFAST_API const char* GetKinematicsHash() { return "<robot:GenericRobot - iiwa7 (d9c596496fe146c0dc40993063041943)>"; }
 
-IKFAST_API const char* GetIkFastVersion() { return "0x10000049"; }
+IKFAST_API const char* GetIkFastVersion() { return "0x1000004a"; }
 
 #ifdef IKFAST_NAMESPACE
 } // end namespace
