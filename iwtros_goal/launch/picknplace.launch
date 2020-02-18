@@ -1,4 +1,9 @@
 <?xml version="1.0"?>
 <launch>
-  <node name="iiwa_pick_place_node" pkg="iwtros_goal" type="picknplace_demo.py" output="screen" ns="iiwa"/>
+  <!--node name="iiwa_pick_place_node" pkg="iwtros_goal" type="picknplace_demo.py" output="screen" ns="iiwa">
+    <remap from="joint_states" to="joint_desired_states"/>
+  </node-->
+  <node name="iiwa_pick_place" pkg="iwtros_goal" type="pnp_demo_node" output="screen" ns="iiwa">
+    <remap from="joint_states" to="joint_desired_states"/>
+  </node>
 </launch>
