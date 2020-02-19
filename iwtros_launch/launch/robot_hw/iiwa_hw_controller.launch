@@ -22,24 +22,23 @@
     <include file="$(find iiwa_driver)/launch/iiwa_bringup.launch"/>
    
     <group ns="iiwa">
-        <!--node name="joint_state_publisher" type="joint_state_publisher" pkg="joint_state_publisher">
-            <rosparam param="source_list">[joint_hw_states] </rosparam>
+        <node name="joint_state_publisher" type="joint_state_publisher" pkg="joint_state_publisher">
+            <rosparam param="source_list">[joint_hw_states, wsg50_gripper/joint_states] </rosparam>
             <param name="rate" value="50"/>
             <remap from="joint_states" to="joint_desired_states"/>
-        </node-->
+        </node>
 
         <include file="$(find iiwa_moveit_config)/launch/move_group.launch">
             <arg name="capabilities" default="true"/>
             <arg name="disable_capabilities" default="true"/>
             <arg name="sim" value="$(arg sim)"/>
-            <!--remap from="joint_states" to="joint_desired_states"/-->
         </include>
 
         <include file="$(find iwtros_launch)/launch/robot_hw/iiwa_description.launch"/>
 
         <!-- Loads joint controller configurations from YAML file to parameter server -->
         <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
-            <!--remap from="joint_states" to="joint_desired_states"/-->
+            <remap from="joint_states" to="joint_desired_states"/>
         </node>
 
     </group>
