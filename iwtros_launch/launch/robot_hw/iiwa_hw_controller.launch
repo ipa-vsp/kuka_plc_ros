@@ -23,7 +23,7 @@
    
     <group ns="iiwa">
         <node name="joint_state_publisher" type="joint_state_publisher" pkg="joint_state_publisher">
-            <rosparam param="source_list">[joint_hw_states, wsg50_gripper/joint_states] </rosparam>
+            <rosparam param="source_list">[joint_hw_states] </rosparam>
             <param name="rate" value="50"/>
             <remap from="joint_states" to="joint_desired_states"/>
         </node>
