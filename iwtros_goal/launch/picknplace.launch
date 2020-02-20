@@ -4,6 +4,5 @@
     <remap from="joint_states" to="joint_desired_states"/>
   </node-->
   <node name="iiwa_pick_place" pkg="iwtros_goal" type="pnp_demo_node" output="screen" ns="iiwa">
-    <remap from="joint_states" to="joint_desired_states"/>
   </node>
 </launch>

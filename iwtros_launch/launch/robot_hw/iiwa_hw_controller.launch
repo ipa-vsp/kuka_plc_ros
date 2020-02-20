@@ -10,35 +10,23 @@
     <arg name="force" default="40" />
     <remap from="/joint_states" to="/joint_states_gripper" if="$(arg remap)"/>
 
-    <node  name="wsg50_gripper"  pkg="wsg_50_driver" type="wsg_50_ip" output="screen" ns="iiwa">
-        <param name="ip" type="string" value="172.31.1.160"/>
-        <param name="port" type="int" value="1000"/>
-        <param name="protocol" type="string" value="tcp"/>
-        <param name="com_mode" type="string" value="$(arg com_mode)"/>
-        <param name="rate" type="double" value="50"/> <!-- WSG50 HW revision 2: up to 30 Hz with script; 140Hz with auto_update -->
-        <param name="grasping_force" type="double" value="$(arg force)"/>
-    </node>
-
-    <include file="$(find iiwa_driver)/launch/iiwa_bringup.launch"/>
+    <!--include file="$(find iiwa_driver)/launch/iiwa_bringup.launch"/-->
    
     <group ns="iiwa">
-        <node name="joint_state_publisher" type="joint_state_publisher" pkg="joint_state_publisher">
+        <!--node name="joint_state_publisher" type="joint_state_publisher" pkg="joint_state_publisher">
             <rosparam param="source_list">[joint_hw_states, wsg50_gripper/joint_states] </rosparam>
             <param name="rate" value="50"/>
             <remap from="joint_states" to="joint_desired_states"/>
-        </node>
+        </node-->
 
         <include file="$(find iiwa_moveit_config)/launch/move_group.launch">
-            <arg name="capabilities" default="true"/>
-            <arg name="disable_capabilities" default="true"/>
-            <arg name="sim" value="$(arg sim)"/>
+            
         </include>
 
-        <include file="$(find iwtros_launch)/launch/robot_hw/iiwa_description.launch"/>
+        <!--include file="$(find iwtros_launch)/launch/robot_hw/iiwa_description.launch"/-->
 
         <!-- Loads joint controller configurations from YAML file to parameter server -->
         <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
-            <remap from="joint_states" to="joint_desired_states"/>
         </node>
 
     </group>

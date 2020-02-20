@@ -4,3 +4,6 @@
 [submodule "wsg50_ros"]
 	path = wsg50_ros
 	url = https://github.com/lernfabrik/wsg50_ros.git
+[submodule "pilz_industrial_motion"]
+	path = pilz_industrial_motion
+	url = https://github.com/PilzDE/pilz_industrial_motion.git

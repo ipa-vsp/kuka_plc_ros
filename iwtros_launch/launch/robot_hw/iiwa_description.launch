@@ -2,6 +2,6 @@
 <launch>
     <arg name="robot_name" value="iiwa"/>
 
-    <param name="robot_description"
+    <param name="/iiwa/robot_description"
           command="$(find xacro)/xacro --inorder '$(find iwtros_description)/urdf/kuka_robot/iiwa7.urdf.xacro'" />
 </launch>

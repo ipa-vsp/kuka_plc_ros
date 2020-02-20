@@ -1,5 +1,5 @@
 <launch>
-    <arg name="sim" default="true"/>
+    <arg name="sim" default="false"/>
     <arg name="moveit_controller_manager" default="moveit_simple_controller_manager/MoveItSimpleControllerManager"/>
     <arg name="hardware_interface" default="PositionJointInterface"/>
     

@@ -87,7 +87,7 @@ void ExecutePose(moveit::planning_interface::MoveGroupInterface& iiwa_group, geo
     startPose.orientation = getPose.pose.orientation;
     startPose.position = getPose.pose.position;
     start_State.setFromIK(joint_model_group, startPose);
-    iiwa_group.setStartState(start_State);                    // Optional setting: If set not woring fines
+    //iiwa_group.setStartState(start_State);                    // Optional setting: If set not woring fines
 
     moveit_msgs::TrajectoryConstraints motionReq;
     motionReq.constraints.resize(1);
