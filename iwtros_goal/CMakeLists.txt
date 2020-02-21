@@ -10,6 +10,7 @@ project(iwtros_goal)
 find_package(catkin REQUIRED COMPONENTS
   actionlib
   actionlib_msgs
+  control_msgs
   geometry_msgs
   moveit_core
   moveit_msgs
@@ -33,7 +34,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES iwtros_goal
-  CATKIN_DEPENDS actionlib actionlib_msgs geometry_msgs moveit_core moveit_msgs moveit_ros_planning moveit_ros_planning_interface moveit_visual_tools roscpp rospy sensor_msgs tf tf2
+  CATKIN_DEPENDS actionlib actionlib_msgs control_msgs geometry_msgs moveit_core moveit_msgs moveit_ros_planning moveit_ros_planning_interface moveit_visual_tools roscpp rospy sensor_msgs tf tf2
 #  DEPENDS system_lib
 )
 

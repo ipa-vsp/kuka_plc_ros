@@ -11,14 +11,11 @@
   <arg name="debug" default="false"/>
   <arg name="extra_gazebo_args" default="--verbose"/>
 
-
   <!-- Hardware spwaner-->
   <include unless="$(arg sim)" file="$(find iwtros_launch)/launch/robot_hw/iiwa_hw_controller.launch">
-      <arg name="sim" value="$(arg sim)"/>
+    <arg name="sim" value="$(arg sim)"/>
   </include>
- 
 
   <node if="$(arg rviz)" name="iiwa_rviz" pkg="rviz" type="rviz" args="-d $(find iwtros_launch)/config/iiwa.rviz" required="true" />
-
   
 </launch>
