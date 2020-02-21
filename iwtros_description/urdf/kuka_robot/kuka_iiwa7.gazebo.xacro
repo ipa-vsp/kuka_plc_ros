@@ -32,18 +32,13 @@
       <mu2>0.2</mu2>
     </gazebo>
     <gazebo reference="${robot_name}_link_4">
-      <turnGravityOff>true</turnGravityOff>
+      <turnGravityOff>true</turnGravityOff>MYROBOT
       <selfCollide>true</selfCollide>
       <material>Gazebo/Orange</material>
       <mu1>0.2</mu1>
       <mu2>0.2</mu2>
     </gazebo>
-    <gazebo reference="${robot_name}_link_5">
-      <turnGravityOff>true</turnGravityOff>
-      <selfCollide>true</selfCollide>
-      <material>Gazebo/Orange</material>
-      <mu1>0.2</mu1>
-      <mu2>0.2</mu2>
+    <gazebo reference="${robot_name}_link_5">MYROBOT
     </gazebo>
     <gazebo reference="${robot_name}_link_6">
       <turnGravityOff>true</turnGravityOff>
@@ -63,7 +58,8 @@
 
     <gazebo>
       <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-        <robotParam>${robot_parameter_name}</robotParam>
+        <robotNamespace>/{robot_name}</robotNamespace>
+        <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
         <legacyModeNS>false</legacyModeNS>
       </plugin>
     </gazebo>
