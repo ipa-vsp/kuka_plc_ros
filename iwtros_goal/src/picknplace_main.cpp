@@ -110,7 +110,7 @@ void ExecutePose(moveit::planning_interface::MoveGroupInterface& iiwa_group, geo
     std::vector<double> joint_values;
     start_State.setFromIK(joint_model_group, target_pose.pose);
     start_State.copyJointGroupPositions(joint_model_group, joint_values);
-    for(size_t i = 0; i < joint_names.size(); i++){
+    for(int i = 0; i < joint_names.size(); i++){
         ROS_INFO("Target Value of the iiwa_joint_%d: %f", i+1, joint_values[i]);
     }
 
@@ -162,19 +162,32 @@ int main(int argc, char** argv){
     target_pose.header.frame_id = "iiwa_link_0";
     target_pose.header.stamp = ros::Time::now()+ros::Duration(2.1);
     target_pose.pose.position.x = 0.4;
-    target_pose.pose.position.y = 0;
-    target_pose.pose.position.z = 0.4;
+    target_pose.pose.position.y = 0.2;
+    target_pose.pose.position.z = 0.3;
     tf2::Quaternion q1;
-    q1.setRPY(M_PI, 0, 0);
+    q1.setRPY(M_PI/2, 0, M_PI);
     // tf2::convert(q1, target_pose.pose.orientation);
     target_pose.pose.orientation.x = q1.x();
     target_pose.pose.orientation.y = q1.y();
     target_pose.pose.orientation.z = q1.z();
+
     target_pose.pose.orientation.w = q1.w();
 
     //addCollisionObject(planning_scene_interface);
 
     /* Refere the Readme*/
+    // Detrimine IK Solution and collisions check################################################
+    moveit::core::RobotModelPtr robot_model;
+    robot_model->hasJointModelGroup("iiwa_arm");
+    robot_state::RobotState rstate(robot_model);
+    rstate.setToDefaultValues();
+    /** Required:
+     * Start poistion
+     * Either from goal joint poistion from the joint contraints
+     * or goal contrains from position contraints.
+     * Trajectory contraints???
+     */
+    //###########################################################################################
    
     ExecutePose(iiwa_group, target_pose);
     ros::Duration(0.1).sleep();
