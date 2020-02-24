@@ -41,7 +41,7 @@ catkin_package(
 catkin_python_setup()
 
 catkin_install_python(PROGRAMS 
-  script/picknplace_demo.py
+  script/iwtros_goal/picknplace_demo.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
