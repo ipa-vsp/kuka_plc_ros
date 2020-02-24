@@ -57,7 +57,7 @@ void ExecutePose(moveit::planning_interface::MoveGroupInterface& iiwa_group, geo
     
     /*Visual tool initialization */
     namespace rvt = rviz_visual_tools;
-    moveit_visual_tools::MoveItVisualTools visual_tools("/iiwa_interface");
+    moveit_visual_tools::MoveItVisualTools visual_tools("/iiwa_link_0");
     visual_tools.deleteAllMarkers();
     visual_tools.loadRemoteControl();
     Eigen::Isometry3d text_pose = Eigen::Isometry3d::Identity();
@@ -147,7 +147,7 @@ int main(int argc, char** argv){
     moveit::planning_interface::MoveGroupInterface iiwa_group(PLANNING_GROUP);
     moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
     iiwa_group.setPlannerId("PTP");
-    iiwa_group.setMaxVelocityScalingFactor(0.4);
+    iiwa_group.setMaxVelocityScalingFactor(0.3);
     iiwa_group.setMaxAccelerationScalingFactor(0.4);
     iiwa_group.setPoseReferenceFrame("iiwa_link_0");
     iiwa_group.setEndEffectorLink("iiwa_link_ee");
@@ -161,17 +161,28 @@ int main(int argc, char** argv){
     geometry_msgs::PoseStamped target_pose;
     target_pose.header.frame_id = "iiwa_link_0";
     target_pose.header.stamp = ros::Time::now()+ros::Duration(2.1);
-    target_pose.pose.position.x = 0.3;
-    target_pose.pose.position.y = -0.42;
-    target_pose.pose.position.z = 1.2;
+    target_pose.pose.position.x = 0.45;
+    target_pose.pose.position.y = 0.62;
+    target_pose.pose.position.z = 1.15;
     tf2::Quaternion q1;
-    q1.setRPY(M_PI, 0, M_PI);
+    q1.setRPY(M_PI, 0, M_PI/4);
     // tf2::convert(q1, target_pose.pose.orientation);
     target_pose.pose.orientation.x = q1.x();
     target_pose.pose.orientation.y = q1.y();
     target_pose.pose.orientation.z = q1.z();
-
     target_pose.pose.orientation.w = q1.w();
+
+     geometry_msgs::PoseStamped target_pose1;
+    target_pose1.header.frame_id = "iiwa_link_0";
+    target_pose1.header.stamp = ros::Time::now()+ros::Duration(2.1);
+    target_pose1.pose.position.x = 0.3;
+    target_pose1.pose.position.y = -0.42;
+    target_pose1.pose.position.z = 1.3;
+    q1.setRPY(M_PI, 0, M_PI/4);
+    target_pose1.pose.orientation.x = q1.x();
+    target_pose1.pose.orientation.y = q1.y();
+    target_pose1.pose.orientation.z = q1.z();
+    target_pose1.pose.orientation.w = q1.w();
 
     //addCollisionObject(planning_scene_interface);
 
@@ -189,9 +200,14 @@ int main(int argc, char** argv){
      */
     //###########################################################################################
     robotSetupChecker();
-   
-    ExecutePose(iiwa_group, target_pose);
-    ros::Duration(0.1).sleep();
+    while (ros::ok())
+    {
+        ExecutePose(iiwa_group, target_pose);
+        ros::Duration(0.1).sleep();
+
+        ExecutePose(iiwa_group, target_pose1);
+        ros::Duration(0.1).sleep();
+    }
 
     ros::waitForShutdown();
     return 0;
