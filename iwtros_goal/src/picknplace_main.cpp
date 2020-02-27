@@ -165,7 +165,7 @@ int main(int argc, char** argv){
     target_pose.pose.position.y = 0.62;
     target_pose.pose.position.z = 1.15;
     tf2::Quaternion q1;
-    q1.setRPY(M_PI, 0, M_PI/4);
+    q1.setRPY(- M_PI, 0, M_PI/4);
     // tf2::convert(q1, target_pose.pose.orientation);
     target_pose.pose.orientation.x = q1.x();
     target_pose.pose.orientation.y = q1.y();
