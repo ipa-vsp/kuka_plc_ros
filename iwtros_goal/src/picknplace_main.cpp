@@ -139,6 +139,13 @@ void ExecutePose(moveit::planning_interface::MoveGroupInterface& iiwa_group, geo
 int main(int argc, char** argv){
     ros::init(argc, argv, "iiwa_pick_place");
     ros::NodeHandle nh;
+
+    actionlib::SimpleActionClient<control_msgs::GripperCommandAction> client("/iiwa/wsg50_gripper_action", true);
+    ROS_INFO("Waiting for sever");
+    bool serverStart = client.waitForServer(ros::Duration(5.0));
+    if(serverStart) ROS_INFO("Gripper Connection is established");
+    control_msgs::GripperCommandGoal goal;
+
     ros::AsyncSpinner sppinner(1);
     sppinner.start();
     
@@ -158,31 +165,55 @@ int main(int argc, char** argv){
     ROS_WARN("IIWA End effecotor link: %s", iiwa_group.getEndEffectorLink().c_str());
 
     //iiwa_group.setNamedTarget("iiwa_Pose1");
-    geometry_msgs::PoseStamped target_pose;
-    target_pose.header.frame_id = "iiwa_link_0";
-    target_pose.header.stamp = ros::Time::now()+ros::Duration(2.1);
-    target_pose.pose.position.x = 0.45;
-    target_pose.pose.position.y = 0.62;
-    target_pose.pose.position.z = 1.15;
+    geometry_msgs::PoseStamped place_pre_pose;
+    place_pre_pose.header.frame_id = "iiwa_link_0";
+    place_pre_pose.header.stamp = ros::Time::now()+ros::Duration(2.1);
+    place_pre_pose.pose.position.x = 0.45;
+    place_pre_pose.pose.position.y = 0.62;
+    place_pre_pose.pose.position.z = 1.15;
     tf2::Quaternion q1;
     q1.setRPY(- M_PI, 0, M_PI/4);
-    // tf2::convert(q1, target_pose.pose.orientation);
-    target_pose.pose.orientation.x = q1.x();
-    target_pose.pose.orientation.y = q1.y();
-    target_pose.pose.orientation.z = q1.z();
-    target_pose.pose.orientation.w = q1.w();
+    // tf2::convert(q1, place_pre_pose.pose.orientation);
+    place_pre_pose.pose.orientation.x = q1.x();
+    place_pre_pose.pose.orientation.y = q1.y();
+    place_pre_pose.pose.orientation.z = q1.z();
+    place_pre_pose.pose.orientation.w = q1.w();
 
-     geometry_msgs::PoseStamped target_pose1;
-    target_pose1.header.frame_id = "iiwa_link_0";
-    target_pose1.header.stamp = ros::Time::now()+ros::Duration(2.1);
-    target_pose1.pose.position.x = 0.3;
-    target_pose1.pose.position.y = -0.42;
-    target_pose1.pose.position.z = 1.3;
+    geometry_msgs::PoseStamped place_pose;
+    place_pose.header.frame_id = "iiwa_link_0";
+    place_pose.header.stamp = ros::Time::now()+ros::Duration(2.1);
+    place_pose.pose.position.x = 0.45;
+    place_pose.pose.position.y = 0.62;
+    place_pose.pose.position.z = 1.02;
     q1.setRPY(M_PI, 0, M_PI/4);
-    target_pose1.pose.orientation.x = q1.x();
-    target_pose1.pose.orientation.y = q1.y();
-    target_pose1.pose.orientation.z = q1.z();
-    target_pose1.pose.orientation.w = q1.w();
+    place_pose.pose.orientation.x = q1.x();
+    place_pose.pose.orientation.y = q1.y();
+    place_pose.pose.orientation.z = q1.z();
+    place_pose.pose.orientation.w = q1.w();
+
+    geometry_msgs::PoseStamped pick_pre_pose;
+    pick_pre_pose.header.frame_id = "iiwa_link_0";
+    pick_pre_pose.header.stamp = ros::Time::now()+ros::Duration(2.1);
+    pick_pre_pose.pose.position.x = 0.33;
+    pick_pre_pose.pose.position.y = -0.427;
+    pick_pre_pose.pose.position.z = 1.3;
+    q1.setRPY(M_PI, 0, M_PI/4);
+    pick_pre_pose.pose.orientation.x = q1.x();
+    pick_pre_pose.pose.orientation.y = q1.y();
+    pick_pre_pose.pose.orientation.z = q1.z();
+    pick_pre_pose.pose.orientation.w = q1.w();
+
+    geometry_msgs::PoseStamped pick_pose;
+    pick_pose.header.frame_id = "iiwa_link_0";
+    pick_pose.header.stamp = ros::Time::now()+ros::Duration(2.1);
+    pick_pose.pose.position.x = 0.33;
+    pick_pose.pose.position.y = -0.427;
+    pick_pose.pose.position.z = 1.222;
+    q1.setRPY(M_PI, 0, M_PI/4);
+    pick_pose.pose.orientation.x = q1.x();
+    pick_pose.pose.orientation.y = q1.y();
+    pick_pose.pose.orientation.z = q1.z();
+    pick_pose.pose.orientation.w = q1.w();
 
     //addCollisionObject(planning_scene_interface);
 
@@ -202,11 +233,38 @@ int main(int argc, char** argv){
     robotSetupChecker();
     while (ros::ok())
     {
-        ExecutePose(iiwa_group, target_pose);
-        ros::Duration(0.1).sleep();
+        ros::Duration(0.5).sleep();
+        ExecutePose(iiwa_group, place_pre_pose);
 
-        ExecutePose(iiwa_group, target_pose1);
-        ros::Duration(0.1).sleep();
+        ros::Duration(0.5).sleep();
+        ExecutePose(iiwa_group, place_pose);
+
+        goal.command.position = 0.055;
+        client.sendGoal(goal);
+        bool reached = client.waitForResult(ros::Duration(50.0));
+        if (reached) ROS_INFO("Gripper Action is done");
+
+        ros::Duration(1.0).sleep();
+        ExecutePose(iiwa_group, place_pre_pose);
+
+        ros::Duration(0.5).sleep();
+        ExecutePose(iiwa_group, pick_pre_pose);
+
+        goal.command.position = 0.05;
+        client.sendGoal(goal);
+        reached = client.waitForResult(ros::Duration(50.0));
+        if (reached) ROS_INFO("Gripper Action is done");
+
+        ros::Duration(0.5).sleep();
+        ExecutePose(iiwa_group, pick_pose);
+
+        goal.command.position = 0.0;
+        client.sendGoal(goal);
+        reached = client.waitForResult(ros::Duration(50.0));
+        if (reached) ROS_INFO("Gripper Action is done");
+
+        ros::Duration(1.0).sleep();
+        ExecutePose(iiwa_group, pick_pre_pose);
     }
 
     ros::waitForShutdown();
