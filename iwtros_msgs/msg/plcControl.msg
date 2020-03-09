@@ -1,11 +1,5 @@
-bool HomePosition
+bool MoveHome       # From PLC Side
 #Pick from Conveyor
-bool ConveyorPrePickPose
-bool ConveyorPick
-bool DHBWPrePlace
-bool DHBWPlaced
+bool ConveyorPickPose
 #Pick From DHBW
-bool DHBWPrePickPose
-bool DHBWPick
-bool ConveyorPrePlace
-bool ConveyorPlaced
+bool DHBWPickPose

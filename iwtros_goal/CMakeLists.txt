@@ -43,6 +43,7 @@ catkin_python_setup()
 
 catkin_install_python(PROGRAMS 
   script/iwtros_goal/picknplace_demo.py
+  script/iwtros_goal/plc_control.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

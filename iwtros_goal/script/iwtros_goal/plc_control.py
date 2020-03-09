@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import rospy
-from iwtros_msgs.msg import plcControl
+from iwtros_msgs.msg import plcControl 
+from iwtros_msgs.msg import kukaControl
 
 from time import sleep
 import snap7 as sn
@@ -19,45 +20,72 @@ bit0 = 0        # get_controlMsgs.funtion: 1 << bit0
 bit1 = 1
 bit2 = 2 
 
-mbyte = plc.read_area(area, 0, start, length)
-print "Q0.0:",get_bool(mbyte,0,bit)
-set_bool(mbyte, 0, bit, 1)
-print "Q0.0:",get_bool(mbyte,0,bit)
-plc.write_area(area_2, 0, start, mbyte)
-plc.disconnect()
+responseFromKUKA = False
+ReachedHomeKUKA = False
 
 def callback(data):
-    a = 1 + 2
+    global responseFromKUKA, ReachedHomeKUKA
+    responseFromKUKA = True
+    rospy.sleep(1)  
+    mByte = plc.read_area(readArea, 0, start, length)
+    set_bool(mByte, 0, bit0, 0)
+    set_bool(mByte, 0, bit1, 0)
+    set_bool(mByte, 0, bit2, 0)
+    if(data.ReachedHome):
+        set_bool(mByte, 0, 0, 1)
+        plc.write_area(writeArea, 0, start, mByte)
+        rospy.loginfo("Reached Home")
+        ReachedHomeKUKA = True
+        rospy.sleep(0.1)
+    if(data.ConveyorPlaced):
+        set_bool(mByte, 0, bit2, 1)
+        plc.write_area(writeArea, 0, start, mByte)
+        rospy.loginfo("Placed on conveyor belt")
+        rospy.sleep(0.1)
+    if(data.DHBWPlaced):
+        set_bool(mByte, 0, bit1, 1)
+        plc.write_area(writeArea, 0, start, mByte)
+        rospy.loginfo("Placed on DHBW belt")
+        rospy.sleep(0.1)
+    ReachedHomeKUKA = False
     
 
 def controller():
+    global responseFromKUKA, ReachedHomeKUKA
     rospy.init_node("plc_controller_node", anonymous=False)
     pub = rospy.Publisher('plc_control', plcControl, queue_size=10)
-    sub = rospy.Subscriber('plc_listener', plcControl, callback=callback)
-
-    controlMsgs = plcControl
-    index0_value = 1 << bit0
-    index1_value = 1 << bit1
-    index2_value = 1 << bit2
+    sub = rospy.Subscriber('plc_listener', kukaControl, callback)
+    rate = rospy.Rate(30)
 
     while not rospy.is_shutdown():
-        mByte = plc.read_area(readArea, 0, start, length)
-        byte_value = mByte[0]
+        # default control messages
+        controlMsgs = plcControl()
+        controlMsgs.MoveHome = False
+        controlMsgs.ConveyorPickPose = False
+        controlMsgs.DHBWPickPose = False
 
-        if(byte_value & index0_value):
-            controlMsgs.HomePosition = True
-            controlMsgs.ConveyorPrePickPose = False
-            controlMsgs.ConveyorPick = False
-            controlMsgs.DHBWPrePlace = False
-            controlMsgs.DHBWPlaced = False
-            controlMsgs.DHBWPrePickPose = False
-            controlMsgs.DHBWPick = False
-            controlMsgs.ConveyorPrePlace = False
-            controlMsgs.ConveyorPlaced = False
+        if(responseFromKUKA == False):
+            rospy.sleep(1)               # Wait until calback is clear
+            mByte = plc.read_area(readArea, 0, start, length)
+
+            if(get_bool(mByte, 0, bit0) and (ReachedHomeKUKA == False)):
+                controlMsgs.MoveHome = True
+                rospy.loginfo("Moving IIWA to Home Pose")
+            if(get_bool(mByte, 0, bit1)):
+                controlMsgs.DHBWPickPose = True
+                rospy.loginfo("Moving IIWA to DHBW Pick Pose")
+                ReachedHomeKUKA = False
+            if(get_bool(mByte, 0, bit2)):
+                controlMsgs.ConveyorPickPose = True
+                rospy.loginfo("Moving IIWA to Conveyor Pick Pose")
+                ReachedHomeKUKA = False
+            
             pub.publish(controlMsgs)
 
-        if(byte_value & index1_value)
-        if(byte_value & index2_value)
+        rate.sleep()
+
+        
+
 
 if __name__ == '__main__':
     try:
