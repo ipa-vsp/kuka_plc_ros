@@ -30,18 +30,22 @@ namespace iwtros{
          * Currently parameters are hard coded.
          * change this in the future
          */
-        moveit::planning_interface::MoveGroupInterface move_group;
-        const std::string PLANNER_ID;
-        const std::string PLANNING_GROUP;
-        const std::string REFERENCE_FRAME;
-        const std::string EE_FRAME;
-        const double velocityScalling;
-        const double accelerationScalling;
+        std::string PLANNER_ID;
+        std::string PLANNING_GROUP;
+        std::string REFERENCE_FRAME;
+        std::string EE_FRAME;
+        double velocityScalling;
+        double accelerationScalling;
+        geometry_msgs::PoseStamped pick_pose, place_pose, home_pose;
         
     public:
         iiwaMove(ros::NodeHandle nh);
         ~iiwaMove();
+        void _loadParam();
         void init(ros::NodeHandle nh);
+
+        /** PLC Control Callback*/ 
+        void plcCallback(const iwtros_msgs::plcControl::ConstPtr& data);
 
         /** Return geometry pose from given poisition values*/
         geometry_msgs::PoseStamped generatePose(double x, double y, double z,
@@ -58,7 +62,7 @@ namespace iwtros{
                             moveit::planning_interface::MoveGroupInterface::Plan plan);
         /** Main Execution */
         void run();
-        void _ctrl_loop();
+        void _ctrl_loop(moveit::planning_interface::MoveGroupInterface &move_group);
 
     };
 }
