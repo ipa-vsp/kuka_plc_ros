@@ -57,8 +57,6 @@ def controller():
         controlMsgs.MoveHome = False
         controlMsgs.ConveyorPickPose = False
         controlMsgs.DHBWPickPose = False
-
-        
     
         mByte = plc.read_area(readArea, 0, start, length)
 
