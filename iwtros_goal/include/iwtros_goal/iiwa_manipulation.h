@@ -17,12 +17,14 @@
 #include <iwtros_msgs/kukaControl.h>
 #include <iwtros_msgs/plcControl.h>
 
+namespace rvt = rviz_visual_tools;
+
 namespace iwtros{
     class iiwaMove : public schunkGripper
     {
     private:
         ros::NodeHandle _nh;
-        robot_state::JointModelGroup * joint_model_group;
+        const robot_state::JointModelGroup * joint_model_group;
         ros::Publisher _plcPub;
         ros::Subscriber _plcSub;
         bool _initialized = false;
@@ -37,8 +39,10 @@ namespace iwtros{
         std::string EE_FRAME;
         double velocityScalling;
         double accelerationScalling;
-        geometry_msgs::PoseStamped pick_pose, place_pose, home_pose;
-        #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+        geometry_msgs::PoseStamped conveyor_pose, DHBW_pose, home_pose;
+        iwtros_msgs::plcControl _plcSubscriberControl; 
+        iwtros_msgs::kukaControl _plcKUKA; 
+
     public:
         iiwaMove(ros::NodeHandle nh);
         ~iiwaMove();
@@ -54,13 +58,24 @@ namespace iwtros{
                                                 std::string base_link);
 
         /** Genarate Motion contraints for Pilz industrial motion*/
-        void motionContraints(const geometry_msgs::PoseStampedConstPtr pose, 
-                                moveit::planning_interface::MoveGroupInterface * move_group);
+        void motionContraints(const geometry_msgs::PoseStamped pose, 
+                                moveit::planning_interface::MoveGroupInterface &move_group);
+        
+        /** Motion execution pipe line */
+        void motionExecution(const geometry_msgs::PoseStamped pose, 
+                                moveit::planning_interface::MoveGroupInterface &move_group);
+        
+        /** Pick and Place Pipeline */
+        void pnpPipeLine(geometry_msgs::PoseStamped pick,
+                        geometry_msgs::PoseStamped place,
+                        const double offset, 
+                        moveit::planning_interface::MoveGroupInterface &move_group);
 
         /** Rviz visual marker*/
-        void visualMarkers(const std::string base_link, 
-                            const geometry_msgs::PoseStampedConstPtr target_pose,
+        void visualMarkers(const geometry_msgs::PoseStamped target_pose,
                             moveit::planning_interface::MoveGroupInterface::Plan plan);
+        /** Update KUKA goals */
+        void poseUpdate();
         /** Main Execution */
         void run();
         void _ctrl_loop(moveit::planning_interface::MoveGroupInterface &move_group);
