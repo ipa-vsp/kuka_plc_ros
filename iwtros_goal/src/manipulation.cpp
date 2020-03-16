@@ -24,6 +24,24 @@ void iwtros::iiwaMove::init(ros::NodeHandle nh){
         _initialized = true;
 }
 
+geometry_msgs::PoseStamped iwtros::iiwaMove::generatePose(double x, double y, double z,
+                                                double roll, double pitch, double yaw,
+                                                std::string base_link){
+        geometry_msgs::PoseStamped pose;
+        pose.header.frame_id = base_link.c_str();
+        pose.header.stamp = ros::Time::now() + ros::Duration(2.1);
+        pose.pose.position.x = x;
+        pose.pose.position.y = y;
+        pose.pose.position.z = z;
+        tf2::Quaternion q;
+        q.setRPY(roll, pitch, yaw);
+        pose.pose.orientation.x = q.x();
+        pose.pose.orientation.y = q.y();
+        pose.pose.orientation.z = q.z();
+        pose.pose.orientation.w = q.w();
+        return pose;
+}
+
 void iwtros::iiwaMove::run(){
         if(!_initialized){
                 ROS_ERROR("IIWA Motion initialization is failed");
@@ -41,5 +59,5 @@ void iwtros::iiwaMove::run(){
 }
 
 void iwtros::iiwaMove::_ctrl_loop(moveit::planning_interface::MoveGroupInterface &move_group){
-        pick_pose = generatePose();
+        pick_pose = generatePose(1, 1, 1 , 1, 1 , 1, "iiwa_link_0");
 }

@@ -11,6 +11,7 @@
 #include <moveit/robot_model_loader/robot_model_loader.h>
 #include <moveit/robot_model/robot_model.h>
 #include <moveit/robot_state/robot_state.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
 #include <iwtros_goal/schunk_gripper.h> 
 #include <iwtros_msgs/kukaControl.h>
@@ -37,7 +38,7 @@ namespace iwtros{
         double velocityScalling;
         double accelerationScalling;
         geometry_msgs::PoseStamped pick_pose, place_pose, home_pose;
-        
+        #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
     public:
         iiwaMove(ros::NodeHandle nh);
         ~iiwaMove();
