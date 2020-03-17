@@ -1,6 +1,4 @@
 <launch>
-
-  <arg name="sim" default="false"/>
   <arg name="pipeline" default="command_planner" />
   <arg name="load_robot_description" default="false"/>
   <include file="$(find iiwa_moveit_config)/launch/planning_context.launch">
@@ -53,7 +51,6 @@
     <arg name="moveit_manage_controllers" value="true" />
     <arg name="moveit_controller_manager" value="iiwa7" unless="$(arg fake_execution)"/>
     <arg name="moveit_controller_manager" value="fake" if="$(arg fake_execution)"/>
-    <arg name="sim" value="$(arg sim)"/>
   </include>
 
   <!-- Sensors Functionality -->

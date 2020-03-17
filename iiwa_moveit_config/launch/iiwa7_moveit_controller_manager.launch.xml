@@ -6,6 +6,5 @@
     <param name="moveit_controller_manager" value="$(arg moveit_controller_manager)"/>
     <arg name="use_controller_manager" default="true" />
     <param name="use_controller_manager" value="$(arg use_controller_manager)" />
-    <rosparam if="$(arg sim)" file="$(find iiwa_moveit_config)/config/controllers.yaml" command="load"/>
-    <rosparam unless="$(arg sim)" file="$(find iiwa_moveit_config)/config/controllers_hw.yaml" command="load"/>
+    <rosparam file="$(find iiwa_moveit_config)/config/controllers.yaml" command="load"/>
 </launch>
