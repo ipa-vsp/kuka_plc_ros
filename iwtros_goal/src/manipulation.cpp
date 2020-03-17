@@ -8,7 +8,7 @@
 #include <moveit_msgs/DisplayTrajectory.h>
 #include <moveit_visual_tools/moveit_visual_tools.h>
 
-iwtros::iiwaMove::iiwaMove(ros::NodeHandle nh) : schunkGripper(nh), _nh(nh){
+iwtros::iiwaMove::iiwaMove(ros::NodeHandle nh, const std::string planning_group) : schunkGripper(nh), _nh(nh), move_group(planning_group){
         // Initialize the move_group
         // joint model group
         // visual markers
@@ -56,7 +56,7 @@ void iwtros::iiwaMove::poseUpdate(){
         // ToDo: Check the ROS parameter server for new pose
         conveyor_pose = generatePose(0.33, -0.427, 1.222, M_PI, 0 , M_PI/4, "iiwa_link_0");
         DHBW_pose = generatePose(0.45, 0.62, 1.02, M_PI, 0, M_PI/4, "iiwa_link_0");
-        home_pose = generatePose(1, 1, 1 , 1, 1 , 1, "iiwa_link_0");
+        home_pose = generatePose(0.5, 0, 1, M_PI, 0, 0, "iiwa_link_0");
 }
 
 void iwtros::iiwaMove::plcCallback(const iwtros_msgs::plcControl::ConstPtr& data){
@@ -70,7 +70,7 @@ void iwtros::iiwaMove::run(){
                 ROS_ERROR("IIWA Motion initialization is failed");
                 return;
         }
-        moveit::planning_interface::MoveGroupInterface move_group(PLANNING_GROUP);
+
         move_group.setPlannerId(PLANNER_ID);
         move_group.setMaxVelocityScalingFactor(velocityScalling);
         move_group.setMaxAccelerationScalingFactor(accelerationScalling);
@@ -79,13 +79,14 @@ void iwtros::iiwaMove::run(){
 
         joint_model_group = move_group.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
 
-        std::thread t1(&iiwaMove::_ctrl_loop, this, move_group);
+        std::thread t1(&iiwaMove::_ctrl_loop, this);
         t1.join();
         ros::shutdown();
 }
 
-void iwtros::iiwaMove::_ctrl_loop(moveit::planning_interface::MoveGroupInterface &move_group){
+void iwtros::iiwaMove::_ctrl_loop(){
         static ros::Rate r(1);
+        // ToDo: Check asynchronous spinner is required
         while(ros::ok()){
                 poseUpdate();
 
@@ -96,19 +97,19 @@ void iwtros::iiwaMove::_ctrl_loop(moveit::planning_interface::MoveGroupInterface
                 if(_plcSubscriberControl.MoveHome){
                         _plcSubscriberControl.MoveHome = false;
                         // ToDo Pose verification
-                        motionExecution(home_pose, move_group);
+                        motionExecution(home_pose);
                         _plcKUKA.ReachedHome = true;
                         _plcPub.publish(_plcKUKA);
                 }
                 if (_plcSubscriberControl.ConveyorPickPose){
                         _plcSubscriberControl.ConveyorPickPose = false;
-                        pnpPipeLine(conveyor_pose, DHBW_pose, 0.12, move_group);
+                        pnpPipeLine(conveyor_pose, DHBW_pose, 0.12);
                         _plcKUKA.DHBWPlaced = true;
                         _plcPub.publish(_plcKUKA);
                 }
                 if(_plcSubscriberControl.DHBWPickPose){
                         _plcSubscriberControl.DHBWPickPose = false;
-                        pnpPipeLine(DHBW_pose, conveyor_pose, 0.12, move_group);
+                        pnpPipeLine(DHBW_pose, conveyor_pose, 0.12);
                         _plcKUKA.ConveyorPlaced = true;
                         _plcPub.publish(_plcKUKA);
                 }else{
@@ -122,34 +123,32 @@ void iwtros::iiwaMove::_ctrl_loop(moveit::planning_interface::MoveGroupInterface
 
 void iwtros::iiwaMove::pnpPipeLine(geometry_msgs::PoseStamped pick,
                         geometry_msgs::PoseStamped place,
-                        const double offset,
-                        moveit::planning_interface::MoveGroupInterface &move_group){
+                        const double offset){
         // Go to Pick prepose (PTP)
         pick.pose.position.z += offset;
-        motionExecution(pick, move_group);
+        motionExecution(pick);
         // ToDo: Open finger
         // Go to Pick pose, ToDo: Set LIN motion
         pick.pose.position.z -= offset;
-        motionExecution(pick, move_group);
+        motionExecution(pick);
         // ToDo: Close finger
         // Go to Pick Postpose, ToDo: Set LIN motion
         pick.pose.position.z += offset;
-        motionExecution(pick, move_group);
+        motionExecution(pick);
         // Go to Place Prepose (PTP)
         place.pose.position.z += offset;
-        motionExecution(place, move_group);
+        motionExecution(place);
         // Go to Place pose, ToDo: Set LIN motion
         place.pose.position.z -= offset;
-        motionExecution(place, move_group);
+        motionExecution(place);
         // ToDo: Open Finger
         // Go to Place Postpose, ToDo: Set LIN motion
         place.pose.position.z += offset;
-        motionExecution(place, move_group);
+        motionExecution(place);
 }
 
-void iwtros::iiwaMove::motionExecution(const geometry_msgs::PoseStamped pose, 
-                                        moveit::planning_interface::MoveGroupInterface &move_group){
-        motionContraints(pose, move_group);
+void iwtros::iiwaMove::motionExecution(const geometry_msgs::PoseStamped pose){
+        motionContraints(pose);
         move_group.setPoseTarget(pose);
         
         // ToDo: Valide the IK solution
@@ -158,11 +157,11 @@ void iwtros::iiwaMove::motionExecution(const geometry_msgs::PoseStamped pose,
         moveit::planning_interface::MoveItErrorCode eCode = move_group.plan(mPlan);
         ROS_INFO("Motion planning is: %s", eCode?"Success":"Failed");
         if(eCode) move_group.execute(mPlan);
-
+        move_group.clearTrajectoryConstraints();
+        move_group.clearPoseTarget();
 }
 
-void iwtros::iiwaMove::motionContraints(const geometry_msgs::PoseStamped pose, 
-                                        moveit::planning_interface::MoveGroupInterface &move_group){
+void iwtros::iiwaMove::motionContraints(const geometry_msgs::PoseStamped pose){
         // Orientation contraints
         moveit_msgs::OrientationConstraint oCon;
         oCon.header.frame_id = REFERENCE_FRAME;
@@ -191,13 +190,12 @@ void iwtros::iiwaMove::motionContraints(const geometry_msgs::PoseStamped pose,
 
 void iwtros::iiwaMove::visualMarkers(const geometry_msgs::PoseStamped target_pose,
                                         moveit::planning_interface::MoveGroupInterface::Plan plan){
-        namespace rvt = rviz_visual_tools;
         moveit_visual_tools::MoveItVisualTools visual_tool(REFERENCE_FRAME);
         visual_tool.deleteAllMarkers();
         visual_tool.loadRemoteControl();
         Eigen::Isometry3d text_pose = Eigen::Isometry3d::Identity();
         text_pose.translation().z() = 0.0;
-        visual_tool.publishText(text_pose, "PnP Execution", rvt::WHITE, rvt::XLARGE);
+        visual_tool.publishText(text_pose, "PnP Execution", rviz_visual_tools::WHITE, rviz_visual_tools::XLARGE);
         // visual_tool.trigger();
         // Visualize Trajectory
         visual_tool.publishAxisLabeled(target_pose.pose, "PnP");

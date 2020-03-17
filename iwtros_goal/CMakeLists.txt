@@ -52,10 +52,16 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
 )
+################# Add Library #############
+add_library(manipulation src/manipulation.cpp)
+add_dependencies(manipulation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(manipulation ${catkin_LIBRARIES})
+###########################################
 
-add_executable(pnp_demo_node 
-  src/picknplace_main.cpp
-)
-target_link_libraries(pnp_demo_node
-  ${catkin_LIBRARIES}
-)
+################ Executable ###############
+###########################################
+add_executable(pnp_demo_node src/picknplace_main.cpp)
+target_link_libraries(pnp_demo_node  ${catkin_LIBRARIES})
+
+add_executable(pnp_node src/main.cpp)
+target_link_libraries(pnp_node  manipulation ${catkin_LIBRARIES})

@@ -17,8 +17,6 @@
 #include <iwtros_msgs/kukaControl.h>
 #include <iwtros_msgs/plcControl.h>
 
-namespace rvt = rviz_visual_tools;
-
 namespace iwtros{
     class iiwaMove : public schunkGripper
     {
@@ -28,6 +26,7 @@ namespace iwtros{
         ros::Publisher _plcPub;
         ros::Subscriber _plcSub;
         bool _initialized = false;
+        moveit::planning_interface::MoveGroupInterface move_group;
         // moveit parameters
         /** ToDo:
          * Currently parameters are hard coded.
@@ -44,7 +43,7 @@ namespace iwtros{
         iwtros_msgs::kukaControl _plcKUKA; 
 
     public:
-        iiwaMove(ros::NodeHandle nh);
+        iiwaMove(ros::NodeHandle nh, const std::string planning_group);
         ~iiwaMove();
         void _loadParam();
         void init(ros::NodeHandle nh);
@@ -58,18 +57,15 @@ namespace iwtros{
                                                 std::string base_link);
 
         /** Genarate Motion contraints for Pilz industrial motion*/
-        void motionContraints(const geometry_msgs::PoseStamped pose, 
-                                moveit::planning_interface::MoveGroupInterface &move_group);
+        void motionContraints(const geometry_msgs::PoseStamped pose);
         
         /** Motion execution pipe line */
-        void motionExecution(const geometry_msgs::PoseStamped pose, 
-                                moveit::planning_interface::MoveGroupInterface &move_group);
+        void motionExecution(const geometry_msgs::PoseStamped pose);
         
         /** Pick and Place Pipeline */
         void pnpPipeLine(geometry_msgs::PoseStamped pick,
                         geometry_msgs::PoseStamped place,
-                        const double offset, 
-                        moveit::planning_interface::MoveGroupInterface &move_group);
+                        const double offset);
 
         /** Rviz visual marker*/
         void visualMarkers(const geometry_msgs::PoseStamped target_pose,
@@ -78,7 +74,7 @@ namespace iwtros{
         void poseUpdate();
         /** Main Execution */
         void run();
-        void _ctrl_loop(moveit::planning_interface::MoveGroupInterface &move_group);
+        void _ctrl_loop();
 
     };
 }
