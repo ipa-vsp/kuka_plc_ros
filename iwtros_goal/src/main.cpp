@@ -6,6 +6,7 @@ int main(int argc, char ** argv){
 
     iwtros::iiwaMove mover(nh, "iiwa_arm");
     ros::AsyncSpinner spinner(1);
+    spinner.start();
     mover.run();
     spinner.stop();
 

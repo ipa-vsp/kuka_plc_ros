@@ -18,11 +18,10 @@
 #include <iwtros_msgs/plcControl.h>
 
 namespace iwtros{
-    class iiwaMove : public schunkGripper
+    class iiwaMove /*: public schunkGripper*/
     {
     private:
         ros::NodeHandle _nh;
-        const robot_state::JointModelGroup * joint_model_group;
         ros::Publisher _plcPub;
         ros::Subscriber _plcSub;
         bool _initialized = false;

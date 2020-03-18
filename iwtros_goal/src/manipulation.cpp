@@ -8,10 +8,11 @@
 #include <moveit_msgs/DisplayTrajectory.h>
 #include <moveit_visual_tools/moveit_visual_tools.h>
 
-iwtros::iiwaMove::iiwaMove(ros::NodeHandle nh, const std::string planning_group) : schunkGripper(nh), _nh(nh), move_group(planning_group){
+iwtros::iiwaMove::iiwaMove(ros::NodeHandle nh, const std::string planning_group) : /*schunkGripper(nh),*/ _nh(nh), move_group(planning_group){
         // Initialize the move_group
         // joint model group
         // visual markers
+        PLANNING_GROUP = planning_group;
         init(_nh);
 }
 
@@ -19,7 +20,6 @@ iwtros::iiwaMove::~iiwaMove(){}
 
 void iwtros::iiwaMove::_loadParam(){
         PLANNER_ID = "PTP";
-        PLANNING_GROUP = "iiwa_arm";
         REFERENCE_FRAME = "iiwa_link_0";
         EE_FRAME = "iiwa_link_ee";
         velocityScalling = 0.5;
@@ -56,7 +56,7 @@ void iwtros::iiwaMove::poseUpdate(){
         // ToDo: Check the ROS parameter server for new pose
         conveyor_pose = generatePose(0.33, -0.427, 1.222, M_PI, 0 , M_PI/4, "iiwa_link_0");
         DHBW_pose = generatePose(0.45, 0.62, 1.02, M_PI, 0, M_PI/4, "iiwa_link_0");
-        home_pose = generatePose(0.5, 0, 1, M_PI, 0, 0, "iiwa_link_0");
+        home_pose = generatePose(0.5, 0, 1.3, M_PI, 0, M_PI/4, "iiwa_link_0");
 }
 
 void iwtros::iiwaMove::plcCallback(const iwtros_msgs::plcControl::ConstPtr& data){
@@ -76,8 +76,7 @@ void iwtros::iiwaMove::run(){
         move_group.setMaxAccelerationScalingFactor(accelerationScalling);
         move_group.setPoseReferenceFrame(REFERENCE_FRAME);
         move_group.setEndEffectorLink(EE_FRAME);
-
-        joint_model_group = move_group.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
+        move_group.allowReplanning(true);
 
         std::thread t1(&iiwaMove::_ctrl_loop, this);
         t1.join();
@@ -87,6 +86,7 @@ void iwtros::iiwaMove::run(){
 void iwtros::iiwaMove::_ctrl_loop(){
         static ros::Rate r(1);
         // ToDo: Check asynchronous spinner is required
+        ros::spinOnce();
         while(ros::ok()){
                 poseUpdate();
 
@@ -97,18 +97,21 @@ void iwtros::iiwaMove::_ctrl_loop(){
                 if(_plcSubscriberControl.MoveHome){
                         _plcSubscriberControl.MoveHome = false;
                         // ToDo Pose verification
+                        ROS_INFO("Going to Home Position");
                         motionExecution(home_pose);
                         _plcKUKA.ReachedHome = true;
                         _plcPub.publish(_plcKUKA);
                 }
                 if (_plcSubscriberControl.ConveyorPickPose){
                         _plcSubscriberControl.ConveyorPickPose = false;
+                        ROS_INFO("Pick from Conveyor and place it on DHBW");
                         pnpPipeLine(conveyor_pose, DHBW_pose, 0.12);
                         _plcKUKA.DHBWPlaced = true;
                         _plcPub.publish(_plcKUKA);
                 }
                 if(_plcSubscriberControl.DHBWPickPose){
                         _plcSubscriberControl.DHBWPickPose = false;
+                        ROS_INFO("Pick from DHBW and place it on Conveyor");
                         pnpPipeLine(DHBW_pose, conveyor_pose, 0.12);
                         _plcKUKA.ConveyorPlaced = true;
                         _plcPub.publish(_plcKUKA);
@@ -117,6 +120,7 @@ void iwtros::iiwaMove::_ctrl_loop(){
                         _plcPub.publish(_plcKUKA);
                 }
 
+                ros::spinOnce();
                 r.sleep();
         }
 }
@@ -150,12 +154,11 @@ void iwtros::iiwaMove::pnpPipeLine(geometry_msgs::PoseStamped pick,
 void iwtros::iiwaMove::motionExecution(const geometry_msgs::PoseStamped pose){
         motionContraints(pose);
         move_group.setPoseTarget(pose);
-        
         // ToDo: Valide the IK solution
-
         moveit::planning_interface::MoveGroupInterface::Plan mPlan;
-        moveit::planning_interface::MoveItErrorCode eCode = move_group.plan(mPlan);
-        ROS_INFO("Motion planning is: %s", eCode?"Success":"Failed");
+        bool eCode = (move_group.plan(mPlan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+        ROS_ERROR_STREAM_NAMED("PLAN","Motion planning is: " << eCode?"Success":"Failed");
+        visualMarkers(pose, mPlan);
         if(eCode) move_group.execute(mPlan);
         move_group.clearTrajectoryConstraints();
         move_group.clearPoseTarget();
@@ -190,6 +193,7 @@ void iwtros::iiwaMove::motionContraints(const geometry_msgs::PoseStamped pose){
 
 void iwtros::iiwaMove::visualMarkers(const geometry_msgs::PoseStamped target_pose,
                                         moveit::planning_interface::MoveGroupInterface::Plan plan){
+        const robot_state::JointModelGroup * joint_model_group = move_group.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
         moveit_visual_tools::MoveItVisualTools visual_tool(REFERENCE_FRAME);
         visual_tool.deleteAllMarkers();
         visual_tool.loadRemoteControl();
