@@ -19,9 +19,7 @@
             <remap from="joint_states" to="joint_desired_states"/>
         </node-->
 
-        <include file="$(find iiwa_moveit_config)/launch/move_group.launch">
-            
-        </include>
+        <include file="$(find iiwa_moveit_config)/launch/move_group.launch"/>
 
         <!--include file="$(find iwtros_launch)/launch/robot_hw/iiwa_description.launch"/-->
 

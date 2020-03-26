@@ -1,4 +1,3 @@
-bool start
 bool ReachedHome
 #Pick from Conveyor
 bool DHBWPlaced

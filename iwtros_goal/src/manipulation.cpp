@@ -18,21 +18,22 @@ iwtros::iiwaMove::iiwaMove(ros::NodeHandle nh, const std::string planning_group)
 
 iwtros::iiwaMove::~iiwaMove(){}
 
-void iwtros::iiwaMove::_loadParam(){
-        PLANNER_ID = "PTP";
-        REFERENCE_FRAME = "iiwa_link_0";
-        EE_FRAME = "iiwa_link_ee";
-        velocityScalling = 0.5;
-        accelerationScalling = 0.5;
-        // ToDo: input array param goals
-}
-
 void iwtros::iiwaMove::init(ros::NodeHandle nh){
         _loadParam();
         _plcSub = nh.subscribe<iwtros_msgs::plcControl>("plc_control", 10, boost::bind(&iiwaMove::plcCallback, this, _1));
         _plcPub = nh.advertise<iwtros_msgs::kukaControl>("plc_listner", 10);
         _initialized = true;
 }
+
+void iwtros::iiwaMove::_loadParam(){
+        PLANNER_ID = "PTP";
+        REFERENCE_FRAME = "iiwa_link_0";
+        EE_FRAME = "iiwa_link_ee";
+        velocityScalling = 0.4;
+        accelerationScalling = 0.4;
+        // ToDo: input array param goals
+}
+
 
 geometry_msgs::PoseStamped iwtros::iiwaMove::generatePose(double x, double y, double z,
                                                 double roll, double pitch, double yaw,
