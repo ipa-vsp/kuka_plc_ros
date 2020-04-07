@@ -18,7 +18,7 @@
 #include <iwtros_msgs/plcControl.h>
 
 namespace iwtros{
-    class iiwaMove /*: public schunkGripper*/
+    class iiwaMove : public schunkGripper
     {
     private:
         ros::NodeHandle _nh;

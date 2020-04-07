@@ -8,7 +8,7 @@
 #include <moveit_msgs/DisplayTrajectory.h>
 #include <moveit_visual_tools/moveit_visual_tools.h>
 
-iwtros::iiwaMove::iiwaMove(ros::NodeHandle nh, const std::string planning_group) : /*schunkGripper(nh),*/ _nh(nh), move_group(planning_group){
+iwtros::iiwaMove::iiwaMove(ros::NodeHandle nh, const std::string planning_group) : schunkGripper(nh), _nh(nh), move_group(planning_group){
         // Initialize the move_group
         // joint model group
         // visual markers
@@ -55,8 +55,8 @@ geometry_msgs::PoseStamped iwtros::iiwaMove::generatePose(double x, double y, do
 
 void iwtros::iiwaMove::poseUpdate(){
         // ToDo: Check the ROS parameter server for new pose
-        conveyor_pose = generatePose(0.33, -0.427, 1.222, M_PI, 0 , M_PI/4, "iiwa_link_0");
-        DHBW_pose = generatePose(0.45, 0.62, 1.02, M_PI, 0, M_PI/4, "iiwa_link_0");
+        conveyor_pose = generatePose(0.228, -0.428, 1.2215, M_PI, 0 , M_PI/4, "iiwa_link_0");
+        DHBW_pose = generatePose(0.38, 0.65, 1.017, M_PI, 0, M_PI/4, "iiwa_link_0");
         home_pose = generatePose(0.5, 0, 1.3, M_PI, 0, M_PI/4, "iiwa_link_0");
 }
 
@@ -100,6 +100,8 @@ void iwtros::iiwaMove::_ctrl_loop(){
                         // ToDo Pose verification
                         ROS_INFO("Going to Home Position");
                         motionExecution(home_pose);
+                        _plcKUKA.ConveyorPlaced = false;
+                        _plcKUKA.DHBWPlaced = false;
                         _plcKUKA.ReachedHome = true;
                         _plcPub.publish(_plcKUKA);
                 }
@@ -107,6 +109,8 @@ void iwtros::iiwaMove::_ctrl_loop(){
                         _plcSubscriberControl.ConveyorPickPose = false;
                         ROS_INFO("Pick from Conveyor and place it on DHBW");
                         pnpPipeLine(conveyor_pose, DHBW_pose, 0.12);
+                        _plcKUKA.ConveyorPlaced = false;
+                        _plcKUKA.ReachedHome = false;
                         _plcKUKA.DHBWPlaced = true;
                         _plcPub.publish(_plcKUKA);
                 }
@@ -114,10 +118,12 @@ void iwtros::iiwaMove::_ctrl_loop(){
                         _plcSubscriberControl.DHBWPickPose = false;
                         ROS_INFO("Pick from DHBW and place it on Conveyor");
                         pnpPipeLine(DHBW_pose, conveyor_pose, 0.12);
+                        _plcKUKA.DHBWPlaced = false;
+                        _plcKUKA.ReachedHome = false;
                         _plcKUKA.ConveyorPlaced = true;
                         _plcPub.publish(_plcKUKA);
                 }else{
-                        ROS_INFO("No motion input");
+                        // ROS_INFO("No motion input");
                         _plcPub.publish(_plcKUKA);
                 }
 
@@ -132,11 +138,12 @@ void iwtros::iiwaMove::pnpPipeLine(geometry_msgs::PoseStamped pick,
         // Go to Pick prepose (PTP)
         pick.pose.position.z += offset;
         motionExecution(pick);
-        // ToDo: Open finger
+        this->openGripper();
         // Go to Pick pose, ToDo: Set LIN motion
         pick.pose.position.z -= offset;
         motionExecution(pick);
-        // ToDo: Close finger
+        this->closeGripper();
+        ros::Duration(1.0).sleep();
         // Go to Pick Postpose, ToDo: Set LIN motion
         pick.pose.position.z += offset;
         motionExecution(pick);
@@ -146,7 +153,8 @@ void iwtros::iiwaMove::pnpPipeLine(geometry_msgs::PoseStamped pick,
         // Go to Place pose, ToDo: Set LIN motion
         place.pose.position.z -= offset;
         motionExecution(place);
-        // ToDo: Open Finger
+        this->openGripper();
+        ros::Duration(0.5).sleep();
         // Go to Place Postpose, ToDo: Set LIN motion
         place.pose.position.z += offset;
         motionExecution(place);
