@@ -32,24 +32,27 @@ def callback(data):
         set_bool(mByte, 0, bit0, 1)
         plc2.write_area(writeArea, 0, start, mByte)
         rospy.loginfo("Reached Home")
-        rospy.sleep(0.1)
+        #rospy.sleep(2)
     if(data.ConveyorPlaced):
         set_bool(mByte, 0, bit2, 1)
         plc2.write_area(writeArea, 0, start, mByte)
         rospy.loginfo("Placed on conveyor belt")
-        rospy.sleep(0.1)
+        #rospy.sleep(2)
     if(data.DHBWPlaced):
         set_bool(mByte, 0, bit1, 1)
         plc2.write_area(writeArea, 0, start, mByte)
         rospy.loginfo("Placed on DHBW belt")
-        rospy.sleep(0.1)
+        #rospy.sleep(2)
     
 
 def controller():
     rospy.init_node("plc_controller_node", anonymous=False)
-    pub = rospy.Publisher('plc_control', plcControl, queue_size=10)
-    sub = rospy.Subscriber('plc_listener', kukaControl, callback)
+    pub = rospy.Publisher('/iiwa/plc_control', plcControl, queue_size=10)
+    sub = rospy.Subscriber('/iiwa/plc_listner', kukaControl, callback)
     rate = rospy.Rate(30)
+    convConter = 0
+    dhbwConter = 0
+    homeCounter = 0
 
     while not rospy.is_shutdown():
         # default control messages
@@ -61,16 +64,21 @@ def controller():
         mByte = plc.read_area(readArea, 0, start, length)
 
         if(get_bool(mByte, 0, bit0)):
+            controlMsgs.ConveyorPickPose = False
+            controlMsgs.DHBWPickPose = False
             controlMsgs.MoveHome = True
-            #rospy.loginfo("Moving IIWA to Home Pose")
-        if(get_bool(mByte, 0, bit1)):
+
+        elif(get_bool(mByte, 0, bit1)):
+            controlMsgs.MoveHome = False
+            controlMsgs.ConveyorPickPose = False
             controlMsgs.DHBWPickPose = True
             rospy.loginfo("Moving IIWA to DHBW Pick Pose")
-            #ReachedHomeKUKA = False
-        if(get_bool(mByte, 0, bit2)):
+            
+        elif(get_bool(mByte, 0, bit2)):
+            controlMsgs.MoveHome = False
+            controlMsgs.DHBWPickPose = False
             controlMsgs.ConveyorPickPose = True
             rospy.loginfo("Moving IIWA to Conveyor Pick Pose")
-            #ReachedHomeKUKA = False
         
         pub.publish(controlMsgs)
 
