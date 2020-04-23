@@ -31,6 +31,11 @@ class _Control(object):
 
         self.waitForUpdate = False
         return
+    
+
+    def __del__(self):
+        self._plc_read.destroy()
+        self._plc_write.destroy()
 
 
     def Callback(self, data):
@@ -39,7 +44,7 @@ class _Control(object):
         set_bool(mByte, 0, BIT1, 0)
         set_bool(mByte, 0, BIT2, 0)
         if(data.ReachedHome):
-            set_bool(mByte, 0, BYTE0, 1)
+            set_bool(mByte, 0, BIT0, 1)
             self._plc_write(WRITE_AREA, 0, START, mByte)
             rospy.loginfo("Reached Home")
         if(data.ConveyorPlaced):
@@ -52,9 +57,6 @@ class _Control(object):
             self._plc_write(WRITE_AREA, 0, START, mByte)
             rospy.loginfo("Placed on DHBW belt")
 
-    def __del__(self):
-        self._plc_read.destroy()
-        self._plc_write.destroy()
     
     def _cntr_loop(self):
         cntrMsg = plcControl()
