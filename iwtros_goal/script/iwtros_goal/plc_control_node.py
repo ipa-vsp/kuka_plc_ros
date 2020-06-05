@@ -29,7 +29,9 @@ class _Control(object):
         self._plc_write = sn.client.Client()
         self._plc_write.connect("192.168.0.1", 0, 1)
 
-        self.waitForUpdate = False
+        self._reached_home = False
+        self._placed_conveyor = False
+        self._placed_DHBW = False
         return
     
 
@@ -47,42 +49,82 @@ class _Control(object):
             set_bool(mByte, 0, BIT0, 1)
             self._plc_write.write_area(WRITE_AREA, 0, START, mByte)
             rospy.loginfo("Reached Home")
+            self._reached_home = True
         if(data.ConveyorPlaced):
             set_bool(mByte, 0, BIT2, 1)
             self._plc_write.write_area(WRITE_AREA, 0, START, mByte)
             rospy.loginfo("Placed on conveyor belt")
+            self._placed_conveyor =True
             #rospy.sleep(2)
         if(data.DHBWPlaced):
             set_bool(mByte, 0, BIT1, 1)
             self._plc_write.write_area(WRITE_AREA, 0, START, mByte)
             rospy.loginfo("Placed on DHBW belt")
+            self._placed_DHBW = True
         self.waitForUpdate = False
 
+
+    def pubControl(self, home = False, conveyor = False, DHBW = False):
+        cntrMsg = plcControl()
+        cntrMsg.MoveHome = home
+        cntrMsg.ConveyorPickPose = conveyor
+        cntrMsg.DHBWPickPose = DHBW
+        self.pub.publish(cntrMsg)
     
     def _cntr_loop(self):
-        cntrMsg = plcControl()
-        while not rospy.is_shutdown():
-            cntrMsg.MoveHome = False
-            cntrMsg.ConveyorPickPose = False
-            cntrMsg.DHBWPickPose = False
-
+        rate = rospy.Rate(5)
+        # Initialize the motion
+        mByte = self._plc_read.read_area(READ_AREA, 0, START, LENGTH)
+        wait_for_home = get_bool(mByte, 0, BIT0)
+        while not wait_for_home and not rospy.is_shutdown():
             mByte = self._plc_read.read_area(READ_AREA, 0, START, LENGTH)
+            wait_for_home = get_bool(mByte, 0, BIT0)
+            rate.sleep()   
             
-            get_bool(mByte, 0, BIT2)
-            if(get_bool(mByte, 0, BIT0) and not self.waitForUpdate):
-                cntrMsg.MoveHome = True
-                self.waitForUpdate = True
-                rospy.loginfo("Moving Home")
-            elif(get_bool(mByte, 0, BIT1) and not self.waitForUpdate):
-                cntrMsg.DHBWPickPose = True
-                self.waitForUpdate = True
-                rospy.loginfo("Picking From Conveyor belt and Placing in DHBW")
-            elif(get_bool(mByte, 0, BIT2) and not self.waitForUpdate):
-                cntrMsg.ConveyorPickPose = True
-                self.waitForUpdate = True
-                rospy.loginfo("Picking from DHBW and Placing in Conveyor belt")
+        # MoveHome
+        self.pubControl(home=True, conveyor=False, DHBW=False)
+        # Wait for reached home
+        while not self._reached_home and not rospy.is_shutdown():
+            print("Waiting for robot to complete the motion")
+            rate.sleep()
+        
+        # Main loop START
+        while self._reached_home and not rospy.is_shutdown():
+            # Wait for Conveyor belt or DHBW Picking command for plc   
+            mByte = self._plc_read.read_area(READ_AREA, 0, START, LENGTH)
+            wait_for_DBHW = get_bool(mByte, 0, BIT1)
+            wait_for_conveyor = get_bool(mByte, 0, BIT2)
+            self._placed_conveyor = False
+
+            if wait_for_DBHW:
+                self._reached_home = False
+                rospy.loginfo("Pick from DHBW and place conveyor belt")
+                # Send command to KUKA iiwa 7
+                self.pubControl(home=False, conveyor=False, DHBW=True)
+                while not self._placed_conveyor and not rospy.is_shutdown():
+                    rate.sleep()
+                
+                # MoveHome
+                self.pubControl(home=True, conveyor=False, DHBW=False)
+                # Wait for reached home
+                while not self._reached_home and not rospy.is_shutdown():
+                    rate.sleep()
             
-            self.pub.publish(cntrMsg)
+            if wait_for_conveyor:
+                self._reached_home = False
+                rospy.loginfo("Pick from conveyor belt and place DHBW")
+                # Send command to KUKA iiwa 7
+                self.pubControl(home=False, conveyor=True, DHBW=False)
+                while not self._placed_DHBW and not rospy.is_shutdown():
+                    rate.sleep()
+                
+                # MoveHome
+                self.pubControl(home=True, conveyor=False, DHBW=False)
+                # Wait for reached home
+                while not self._reached_home and not rospy.is_shutdown():
+                    rate.sleep()
+
+            rate.sleep()
 
 
 if __name__ == '__main__':
