@@ -45,17 +45,18 @@ class _Control(object):
         set_bool(mByte, 0, BIT2, 0)
         if(data.ReachedHome):
             set_bool(mByte, 0, BIT0, 1)
-            self._plc_write(WRITE_AREA, 0, START, mByte)
+            self._plc_write.write_area(WRITE_AREA, 0, START, mByte)
             rospy.loginfo("Reached Home")
         if(data.ConveyorPlaced):
             set_bool(mByte, 0, BIT2, 1)
-            self._plc_write(WRITE_AREA, 0, START, mByte)
+            self._plc_write.write_area(WRITE_AREA, 0, START, mByte)
             rospy.loginfo("Placed on conveyor belt")
             #rospy.sleep(2)
         if(data.DHBWPlaced):
             set_bool(mByte, 0, BIT1, 1)
-            self._plc_write(WRITE_AREA, 0, START, mByte)
+            self._plc_write.write_area(WRITE_AREA, 0, START, mByte)
             rospy.loginfo("Placed on DHBW belt")
+        self.waitForUpdate = False
 
     
     def _cntr_loop(self):
@@ -65,8 +66,9 @@ class _Control(object):
             cntrMsg.ConveyorPickPose = False
             cntrMsg.DHBWPickPose = False
 
-            mByte = self._plc_read(READ_AREA, 0, START, LENGTH)
-
+            mByte = self._plc_read.read_area(READ_AREA, 0, START, LENGTH)
+            
+            get_bool(mByte, 0, BIT2)
             if(get_bool(mByte, 0, BIT0) and not self.waitForUpdate):
                 cntrMsg.MoveHome = True
                 self.waitForUpdate = True
@@ -79,6 +81,8 @@ class _Control(object):
                 cntrMsg.ConveyorPickPose = True
                 self.waitForUpdate = True
                 rospy.loginfo("Picking from DHBW and Placing in Conveyor belt")
+            
+            self.pub.publish(cntrMsg)
 
 
 if __name__ == '__main__':
