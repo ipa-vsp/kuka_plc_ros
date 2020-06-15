@@ -20,7 +20,7 @@ class _Control(object):
     def __init__(self, *args, **kwargs):
         super(_Control, self).__init__(*args, **kwargs)
         controllerTopic = "/iiwa/plc_control"
-        listenerTopic = "/iiwa/plc_listener"
+        listenerTopic = "/iiwa/plc_listner"
         self.pub = rospy.Publisher(controllerTopic, plcControl, queue_size=10)
         self.sub = rospy.Subscriber(listenerTopic, kukaControl, self.Callback)
 
@@ -82,6 +82,7 @@ class _Control(object):
             rate.sleep()   
             
         # MoveHome
+        print("Move Home")
         self.pubControl(home=True, conveyor=False, DHBW=False)
         # Wait for reached home
         while not self._reached_home and not rospy.is_shutdown():
@@ -95,6 +96,7 @@ class _Control(object):
             wait_for_DBHW = get_bool(mByte, 0, BIT1)
             wait_for_conveyor = get_bool(mByte, 0, BIT2)
             self._placed_conveyor = False
+            self._placed_DHBW = False
 
             if wait_for_DBHW:
                 self._reached_home = False

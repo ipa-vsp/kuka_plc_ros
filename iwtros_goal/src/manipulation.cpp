@@ -29,8 +29,8 @@ void iwtros::iiwaMove::_loadParam(){
         PLANNER_ID = "PTP";
         REFERENCE_FRAME = "iiwa_link_0";
         EE_FRAME = "iiwa_link_ee";
-        velocityScalling = 0.4;
-        accelerationScalling = 0.4;
+        velocityScalling = 0.3;
+        accelerationScalling = 0.3;
         // ToDo: input array param goals
 }
 
