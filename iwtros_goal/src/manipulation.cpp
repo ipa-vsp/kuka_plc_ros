@@ -29,7 +29,7 @@ void iwtros::iiwaMove::_loadParam(){
         PLANNER_ID = "PTP";
         REFERENCE_FRAME = "iiwa_link_0";
         EE_FRAME = "iiwa_link_ee";
-        velocityScalling = 0.3;
+        velocityScalling = 0.4;
         accelerationScalling = 0.3;
         // ToDo: input array param goals
 }
@@ -55,7 +55,7 @@ geometry_msgs::PoseStamped iwtros::iiwaMove::generatePose(double x, double y, do
 
 void iwtros::iiwaMove::poseUpdate(){
         // ToDo: Check the ROS parameter server for new pose
-        conveyor_pose = generatePose(0.23, -0.43, 1.227, M_PI, 0 , M_PI/4, "iiwa_link_0");
+        conveyor_pose = generatePose(0.23, -0.43, 1.22, M_PI, 0 , M_PI/4, "iiwa_link_0");
         DHBW_pose = generatePose(0.38, 0.65, 1.017, M_PI, 0, M_PI/4, "iiwa_link_0");
         home_pose = generatePose(0.5, 0, 1.3, M_PI, 0, M_PI/4, "iiwa_link_0");
 }
@@ -144,7 +144,7 @@ void iwtros::iiwaMove::pnpPipeLine(geometry_msgs::PoseStamped pick,
         pick.pose.position.z -= offset;
         motionExecution(pick);
         this->closeGripper();
-        ros::Duration(1.0).sleep();
+        ros::Duration(2.0).sleep();
         // Go to Pick Postpose, ToDo: Set LIN motion
         pick.pose.position.z += offset;
         motionExecution(pick);
@@ -157,10 +157,11 @@ void iwtros::iiwaMove::pnpPipeLine(geometry_msgs::PoseStamped pick,
         place.pose.position.z -= offset;
         motionExecution(place);
         this->openGripper();
-        ros::Duration(1.0).sleep();
+        ros::Duration(2.0).sleep();
         // Go to Place Postpose, ToDo: Set LIN motion
         place.pose.position.z += offset;
         motionExecution(place);
+        this->closeGripper();
 }
 
 void iwtros::iiwaMove::motionExecution(const geometry_msgs::PoseStamped pose){
