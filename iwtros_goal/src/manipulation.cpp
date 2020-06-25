@@ -55,8 +55,8 @@ geometry_msgs::PoseStamped iwtros::iiwaMove::generatePose(double x, double y, do
 
 void iwtros::iiwaMove::poseUpdate(){
         // ToDo: Check the ROS parameter server for new pose
-        conveyor_pose = generatePose(0.23, -0.43, 1.22, M_PI, 0 , M_PI/4, "iiwa_link_0");
-        DHBW_pose = generatePose(0.38, 0.65, 1.017, M_PI, 0, M_PI/4, "iiwa_link_0");
+        conveyor_pose = generatePose(0.23, -0.43, 1.223, M_PI, 0 , M_PI/4, "iiwa_link_0");
+        DHBW_pose = generatePose(0.38, 0.65, 1.02, M_PI, 0, M_PI/4, "iiwa_link_0");
         home_pose = generatePose(0.5, 0, 1.3, M_PI, 0, M_PI/4, "iiwa_link_0");
 }
 
