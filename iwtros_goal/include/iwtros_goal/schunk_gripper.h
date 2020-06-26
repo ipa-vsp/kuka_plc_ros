@@ -44,7 +44,7 @@ namespace iwtros{
     }
 
     void schunkGripper::openGripper(){
-        _goal.command.position = 0.055;
+        _goal.command.position = 0.053;
         _client.sendGoal(_goal);
         bool reached = _client.waitForResult(ros::Duration(10.0));
         if(reached) ROS_INFO("Opened Finger");
