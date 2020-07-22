@@ -16,6 +16,6 @@
     <arg name="sim" value="$(arg sim)"/>
   </include>
 
-  <node if="$(arg rviz)" name="iiwa_rviz" pkg="rviz" type="rviz" args="-d $(find iwtros_launch)/config/iiwa.rviz" required="true" />
+  <node if="$(arg rviz)" name="iiwa_rviz" pkg="rviz" type="rviz" args="-d $(find iwtros_launch)/config/box_detection.rviz" required="true" />
   
 </launch>
