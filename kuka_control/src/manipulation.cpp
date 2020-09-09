@@ -180,6 +180,11 @@ void iwtros::iiwaMove::pnpPipeLine(geometry_msgs::PoseStamped pick,
         motionExecution(pick);
         // Go to Place Prepose (PTP)
         place.pose.position.z += offset;
+        geometry_msgs::PoseStamped temp_pose = place;
+        temp_pose.pose.position.x = 0.45;
+        temp_pose.pose.position.y = -0.25;
+        temp_pose.pose.position.z += 0.05;
+        motionExecution(temp_pose);
         motionExecution(place);
         // Go to Place pose, ToDo: Set LIN motion
         place.pose.position.z -= offset;

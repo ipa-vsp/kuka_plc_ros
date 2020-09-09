@@ -10,7 +10,7 @@
     <arg name="force" default="40" />
     <remap from="/joint_states" to="/joint_states_gripper" if="$(arg remap)"/>
 
-    <!--include file="$(find iiwa_driver)/launch/iiwa_bringup.launch"/-->
+    <include file="$(find iiwa_driver)/launch/iiwa_bringup.launch"/>
    
     <group ns="iiwa">
         <!--node name="joint_state_publisher" type="joint_state_publisher" pkg="joint_state_publisher">
